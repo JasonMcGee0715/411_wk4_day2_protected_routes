@@ -11,15 +11,37 @@ import Login from './components/Login'
 
 
 // Write ProtectedRoute function here
+const ProtectedRoute = ({component: Component, ...rest}) => {
+    console.log({...rest})
+    return (
+        <Route
+        {...rest}
+        render={(props) => {
+            return checkAuth() ? (<Component {...props} />) : (<Redirect to='/login' />)
+
+        }}
+        />
+    )
+}
+
+const checkAuth = () => {
+    const cookies = cookie.parse(document.cookie);
+    console.log(cookie);
+    
+    return cookies['loggedIn'] ? true : false
+}
+
+
+
 
 
 const Router = () => {
     return (
         <Switch>
             <Route path="/login" component={Login} />
-            <Route exact path="/" component={Home} />
-            <Route path="/about" component={About} />
-            <Route path="/car/:id" component={Car} />
+            <ProtectedRoute exact path="/" component={Home} />
+            <ProtectedRoute path="/about" component={About} />
+            <ProtectedRoute path="/car/:id" component={Car} />
         </Switch>
     );
 };
